@@ -25,10 +25,11 @@ Vagrant.configure("2") do |config|
     config.vm.box = settings["software"]["box"]
   end
   config.vm.box_check_update = true
+  config.vm.disk :disk, size: "100GB", name: "zfspv"
 
   config.vm.define "controlplane" do |controlplane|
     controlplane.vm.hostname = "controlplane"
-    controlplane.vm.network "private_network", ip: settings["network"]["control_ip"]
+    controlplane.vm.network "public_network", ip: settings["network"]["control_ip"]
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
         controlplane.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
@@ -64,7 +65,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "node0#{i}" do |node|
       node.vm.hostname = "node0#{i}"
-      node.vm.network "private_network", ip: IP_NW + "#{IP_START + i}"
+      node.vm.network "public_network", ip: IP_NW + "#{IP_START + i}"
       if settings["shared_folders"]
         settings["shared_folders"].each do |shared_folder|
           node.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
